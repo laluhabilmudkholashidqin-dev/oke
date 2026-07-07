@@ -1,17 +1,16 @@
 <?php
 
+use App\Http\Controllers\WeatherController;
+use App\Http\Controllers\FavoriteController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProdukController;
 
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/', [WeatherController::class, 'index'])->name('weather.index');
+Route::post('/search', [WeatherController::class, 'search'])->name('weather.search');
+Route::get('/weather/{city}', [WeatherController::class, 'show'])->name('weather.show');
+Route::post('/coordinates', [WeatherController::class, 'getWeatherByCoordinates'])->name('weather.coordinates');
 
-Route::prefix('inventaris')->group(function () {
-    Route::get('/daftar-barang', [ProdukController::class, 'daftarBarang'])->name('inventaris.daftar-barang');
-    Route::get('/tambah-produk', [ProdukController::class, 'tambahProduk'])->name('inventaris.tambah-produk');
-    Route::post('/store', [ProdukController::class, 'store'])->name('inventaris.store');
-    Route::get('/informasi', [ProdukController::class, 'informasi'])->name('inventaris.informasi');
-    Route::get('/{produk}/edit', [ProdukController::class, 'edit'])->name('inventaris.edit');
-    Route::put('/{produk}', [ProdukController::class, 'update'])->name('inventaris.update');
-    Route::delete('/{produk}', [ProdukController::class, 'destroy'])->name('inventaris.destroy');
+Route::middleware('auth')->group(function () {
+    Route::post('/favorites', [FavoriteController::class, 'store'])->name('favorites.store');
+    Route::delete('/favorites/{favorite}', [FavoriteController::class, 'destroy'])->name('favorites.destroy');
+    Route::get('/api/favorites', [FavoriteController::class, 'getFavorites'])->name('favorites.api');
 });
